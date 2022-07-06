@@ -12,10 +12,10 @@ You will need TinyGPS++ library, no modifications required.
   
 To flash the module you'll need to add ESP32 support to the Arduino IDE, and select "ESP32 Wrover Kit (all versions)"  
   
-You might also need the ![CP210x Universal Windows Driver](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers) if you can't reach the COM port  
+You might also need the [CP210x Universal Windows Driver](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers) if you can't reach the COM port  
   
 # Documentation
-![Here's](https://datasheet.lcsc.com/lcsc/2005181307_Wireless-tag-WT32-SC01_C555472.pdf) the datasheet I've been using to check the pins on the board and other information  
+[Here's](https://datasheet.lcsc.com/lcsc/2005181307_Wireless-tag-WT32-SC01_C555472.pdf) the datasheet I've been using to check the pins on the board and other information  
   
 # Hardware
 Here's the hardware I've used:  
