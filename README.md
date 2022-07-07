@@ -24,3 +24,6 @@ Here's the hardware I've used:
 - Any kind of buttons x2 (I've used a motorcycle handlebar switch module)  
 - 115 x 85 x 35 mm Transparent case (There's some space left)  
 - 2 GX16-5pin connectors for the buttons and the USB connection  
+
+# Wiring diagram
+![WT32-SC01_TripMaster](https://i.imgur.com/hC7vUgW.png)
