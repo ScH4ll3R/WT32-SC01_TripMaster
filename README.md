@@ -27,3 +27,7 @@ Here's the hardware I've used:
 
 # Wiring diagram
 ![WT32-SC01_TripMaster](https://i.imgur.com/hC7vUgW.png)
+
+# Adding a splash image
+Create your PNG image (480x320px), and convert it to .c file in this website http://www.rinkydinkelectronics.com/t_imageconverter565.php
+Then save the image as splash.h (important .h not .c) in the root folder. Compile and upload
