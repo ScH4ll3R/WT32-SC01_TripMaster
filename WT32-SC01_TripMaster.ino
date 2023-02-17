@@ -8,6 +8,7 @@
 #include "sat.h"
 #include "redsave.h"
 #include "greensave.h"
+#include "splash.h"
 
 #define GPS_BAUD 9600           // GPS module baud rate. GP3906 defaults to 9600.
 #define RXD2 27                 // Connect GPS Tx Here
@@ -16,6 +17,9 @@
 #define PIN_DECREASE_BTN 33     // Connect trip decrease button here
 #define EEPROM_SIZE 5           // Memory size to store user params and trip
 #define swVersion "V1.0"        // Current SW version
+#define intMemPos 4           // Position in memory to store the integer value of the trip
+#define decMemPos 5           // Position in memory to store the decimal value of the trip
+#define screenMemPos 3        // Position in memory to store the user defined screen rotation
 
 #define SerialMonitor Serial
 
@@ -143,7 +147,7 @@ void handleCfgMenu() {
         }
         tft.fillScreen(BG_COLOR);
         tft.setRotation(screenRotation);
-        EEPROM.write(3, screenRotation);
+        EEPROM.write(screenMemPos, screenRotation);
         EEPROM.commit();
       } else if (option == 2) {
         uint16_t flip = BG_COLOR;
@@ -169,10 +173,10 @@ void setup()
 
   // Read stored Trip and screen rotation
   EEPROM.begin(EEPROM_SIZE);
-  int storedInt = int(EEPROM.read(0));
-  double storedDec = double(EEPROM.read(1)) / 100;
+  int storedInt = int(EEPROM.read(intMemPos));
+  double storedDec = double(EEPROM.read(decMemPos)) / 100;
   tripPartial = storedInt + storedDec;
-  screenRotation = int(EEPROM.read(3));
+  screenRotation = int(EEPROM.read(screenMemPos));
 
   // Increase and decrease button pins
   pinMode(PIN_DECREASE_BTN, INPUT_PULLUP);
@@ -180,7 +184,8 @@ void setup()
 
   // Screen initialization
   initScreen();
-  tft.fillScreen(BG_COLOR);
+  tft.pushImage(0, 0, 480, 320, splash);
+  delay(800);
 
   // Check if during boot the increase button is pressed
   int increaseBtnVal = digitalRead(PIN_INCREASE_BTN);
@@ -266,8 +271,8 @@ void updateDistance() {
       // Save Trip
       int intTrip = tripPartial;
       double decTrip = (tripPartial - intTrip) * 100;
-      EEPROM.write(0, intTrip);
-      EEPROM.write(1, decTrip);
+      EEPROM.write(intMemPos, intTrip);
+      EEPROM.write(decMemPos, decTrip);
       EEPROM.commit();
       savedProgress = true;
       tft.pushImage(455, 290, 20, 20, greensave);
@@ -301,16 +306,16 @@ void handleButtons() {
     if (holdClick > 40) {
       // Reset trip and store it
       tripPartial = 0;
-      EEPROM.write(0, 0);
-      EEPROM.write(1, 0);
+      EEPROM.write(intMemPos, 0);
+      EEPROM.write(decMemPos, 0);
       EEPROM.commit();
       tft.pushImage(455, 290, 20, 20, greensave);
     } else if (holdClick == 0) {
       // Save Trip to memory
       int intTrip = tripPartial;
       double decTrip = (tripPartial - intTrip) * 100;
-      EEPROM.write(0, intTrip);
-      EEPROM.write(1, decTrip);
+      EEPROM.write(intMemPos, intTrip);
+      EEPROM.write(decMemPos, decTrip);
       EEPROM.commit();
       savedProgress = true;
       tft.pushImage(455, 290, 20, 20, greensave);
@@ -421,7 +426,11 @@ void printGPSInfo()
   }
   tft.drawString("  " + String(tinyGPS.satellites.value()), 436 , 6, 2);
   // GPS signal quality (red if the quality is low)
-  tft.drawString("Q: " + String(gpsPrecision) + "   ",  180 , 290, 4);
+  if(gpsPrecision == 9999){
+    tft.drawString("NO SIGNAL",  180 , 290, 4);
+  } else {
+    tft.drawString("Q: " + String(gpsPrecision) + "        ",  180 , 290, 4);
+  }
   tft.setTextColor(FG_COLOR, BG_COLOR);
 }
 
